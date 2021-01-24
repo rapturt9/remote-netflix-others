@@ -1,0 +1,39 @@
+#include "IRLibAll.h"
+
+//Create a receiver object to listen on pin 1
+IRrecvPCI myReceiver(2);
+
+//Create a decoder object 
+IRdecode myDecoder;   
+int output = 9;
+int value = 0;
+
+void setup() {
+  Serial.begin(9600);
+  delay(2000); while (!Serial); //delay for Leonardo
+  myReceiver.enableIRIn(); // Start the receiver
+  //Serial.println(F("Ready to receive IR signals"));
+  pinMode(output, OUTPUT);
+}
+
+void loop() {
+  //Continue looping until you get a complete signal received
+  if (myReceiver.getResults()) {
+    myDecoder.decode();           //Decode it
+    //Serial.println(myDecoder.value);
+    switch(myDecoder.value){
+      case(16753245):
+        value = 255;
+        break;
+       default:
+        value = 1;
+        break;
+    }
+    //myDecoder.dumpResults(true)
+    Serial.write(mystr,5); //Write the serial data
+    myReceiver.enableIRIn();      //Restart receiver
+  }
+  //Serial.println(value);
+  digitalWrite(output, value);
+  delay(10);
+}
